@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ncr.itss.dao.RoleDao">
+    <resultMap id="roleResultMap" type="com.ncr.itss.entity.Role">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+    </resultMap>
+
+    <sql id="roleBasicMap">
+        id, name, code, create_at, update_at
+    </sql>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.ncr.itss.entity.Role">
+        INSERT INTO role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="createAt != null">
+                create_at,
+            </if>
+            <if test="updateAt != null">
+                update_at,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="code != null">
+                #{code},
+            </if>
+            <if test="createAt != null">
+                #{createAt},
+            </if>
+            <if test="updateAt != null">
+                #{updateAt},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertAdminRole">
+        INSERT INTO admin_role (
+            admin_id,
+            role_id
+        )
+        VALUES (
+            #{adminId},
+            #{roleId}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.ncr.itss.entity.Role">
+        UPDATE role SET
+        <trim suffix="" suffixOverrides=",">
+            <if test="code!=null">
+                code=#{code},
+            </if>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+
+            <if test="createTime!=null">
+                create_at=#{createTime},
+            </if>
+            <if test="updateTime==null">
+                update_time=getdate(),
+            </if>
+        </trim>
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteAdminRoleByAdminId">
+        DELETE FROM admin_role
+        WHERE admin_id = #{adminId}
+    </delete>
+
+    <delete id="delete">
+        DELETE FROM role
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteAdminRoleByRoleId">
+         DELETE FROM admin_role
+        WHERE role_id = #{roleId}
+    </delete>
+
+
+    <select id="findAll" resultMap="roleResultMap">
+        SELECT
+        <include refid="roleBasicMap"/>
+        FROM role
+    </select>
+
+    <select id="find" resultMap="roleResultMap">
+        SELECT
+        <include refid="roleBasicMap"/>
+        FROM role
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByMenuId" resultType="com.ncr.itss.entity.Role">
+       SELECT *
+        FROM role r
+            LEFT JOIN role_menu rm
+                ON r.id = rm.role_id
+        WHERE rm.menu_id = #{menuId};
+    </select>
+
+    <select id="findByAdminId" resultType="com.ncr.itss.entity.Role">
+        SELECT *
+        FROM admin_role ar
+            LEFT JOIN role r
+                ON ar.role_id = r.id
+        WHERE ar.admin_id = #{adminId};
+    </select>
+
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace命名空间,作用就是对sql进行分类化管理,理解sql隔离
+注意:使用mapper代理方法开发,namespace有特殊重要的作用,namespace等于mapper接口地址-->
+<mapper namespace="com.ncr.itss.dao.AdminDao">
+
+    <resultMap id="adminMap" type="com.ncr.itss.entity.Admin">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="create_at" property="createAt"/>
+        <result column="update_at" property="updateAt"/>
+    </resultMap>
+
+    <sql id="adminBasicSql">
+        id, username, password, create_at, update_at
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.ncr.itss.entity.Admin">
+        INSERT INTO admin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="createAt != null">
+                create_at,
+            </if>
+            <if test="updateAt != null">
+                update_at,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="username != null">
+                #{username},
+            </if>
+            <if test="password != null">
+                #{password},
+            </if>
+            <if test="createAt != null">
+                #{createAt},
+            </if>
+            <if test="updateAt != null">
+                #{updateAt},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.ncr.itss.entity.Admin">
+        UPDATE admin SET
+        <trim suffix="" suffixOverrides=",">
+            <if test="username!=null">
+                username=#{username},
+            </if>
+            <if test="password!=null">
+                password=#{password},
+            </if>
+            <if test="createAt!=null">
+                create_at=#{createAt},
+            </if>
+            <if test="updateAt!=null">
+                update_at=#{updateAt},
+            </if>
+        </trim>
+        WHERE id=#{id}
+    </update>
+
+
+    <select id="findAll" resultMap="adminMap">
+        SELECT
+        <include refid="adminBasicSql"/>
+        FROM admin
+    </select>
+
+    <select id="findByUsername" resultMap="adminMap">
+        SELECT
+        <include refid="adminBasicSql"/>
+        FROM admin
+        WHERE username = #{userName};
+    </select>
+
+    <select id="find" resultMap="adminMap">
+        SELECT
+        <include refid="adminBasicSql"/>
+        FROM admin
+        WHERE id = #{id}
+    </select>
+
+
+</mapper>
